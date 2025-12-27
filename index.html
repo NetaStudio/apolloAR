@@ -6,34 +6,65 @@
     <title>あぽろＡＲ</title>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
+        body { margin: 0; font-family: sans-serif; }
+        
         model-viewer {
             width: 100vw;
             height: 100vh;
+            background-color: #f0f0f0;
         }
 
-        /* ARボタンのスタイル（これがないと見えない場合があります） */
+        /* ARボタン：自動で消されないように !important を使用 */
         #ar-button {
-            background-color: #fff;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            padding: 10px 20px;
+            background-color: #ffffff;
+            border-radius: 30px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            padding: 12px 24px;
             position: absolute;
-            top: 20px;
+            bottom: 60px; /* 押しやすいように下に配置 */
             left: 50%;
             transform: translateX(-50%);
-            z-index: 100;
+            z-index: 999;
             font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            /* 判定によって消されないように強制表示 */
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        /* Xなどのアプリ内ブラウザ用メッセージ */
+        #app-notice {
+            display: none; /* 通常は隠しておく */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 68, 68, 0.95);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            z-index: 10000;
+            font-size: 14px;
+            line-height: 1.5;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
+
+<div id="app-notice">
+    ⚠️ Xのアプリ内ブラウザではARが正常に動作しません。<br>
+    <strong>右下のアイコンから「Safari」または「ブラウザ」で開き直してください。</strong>
+</div>
 
 <model-viewer
     src="apollo.glb"
     ios-src="apollo.usdz"
     alt="Astronaut model"
     ar
-    ar-modes="webxr scene-viewer quick-look" 
+    ar-modes="quick-look webxr scene-viewer" 
     camera-controls
     autoplay 
     animation-name="idle"
@@ -42,7 +73,31 @@
     <button slot="ar-button" id="ar-button">
         AR撮影
     </button>
+
+    <div slot="ar-failure" style="position:absolute; bottom:20px; width:100%; text-align:center; color: #666;">
+        AR機能が読み込めませんでした
+    </div>
 </model-viewer>
+
+<script>
+    // X(Twitter), LINE, Instagramなどのアプリ内ブラウザ判定
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    const isAppBrowser = /FBAN|FBAV|Twitter|Instagram|Line/i.test(ua);
+    
+    // iPhone（iOS）かどうか
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+    if (isAppBrowser) {
+        // アプリ内ブラウザなら通知を表示
+        document.getElementById('app-notice').style.display = 'block';
+    }
+
+    // 補足：iOSでQuickLookを優先的に呼び出すための設定
+    const modelViewer = document.querySelector('model-viewer');
+    modelViewer.addEventListener('load', () => {
+        console.log("Model loaded");
+    });
+</script>
 
 </body>
 </html>
