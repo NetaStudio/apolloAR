@@ -3,85 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>あぽろARダイレクト</title>
+    <title>あぽろＡＲ</title>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        model-viewer {
+            width: 100vw;
             height: 100vh;
-            margin: 0;
-            background: #000;
-            color: #fff;
-            font-family: sans-serif;
         }
-        .launch-btn {
-            padding: 20px 40px;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(45deg, #FF512F, #DD2476);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            text-decoration: none;
-        }
-        p { margin-top: 20px; font-size: 14px; opacity: 0.8; }
     </style>
 </head>
 <body>
-
-    <a id="ar-link" class="launch-btn">🚀 ARを起動する</a>
-    
-    <p id="status-msg">お使いの端末を判定中...</p>
-
-    <script>
-        // 設定：自分のGitHubのURLに書き換えてください
-        const GLB_URL = "https://[あなたのユーザー名].github.io/[リポジトリ名]/apollo.glb";
-        const USDZ_URL = "https://[あなたのユーザー名].github.io/[リポジトリ名]/apollo.usdz";
-        const FALLBACK_URL = window.location.href; // 失敗時の戻り先
-
-        const btn = id('ar-link');
-        const msg = id('status-msg');
-        const ua = navigator.userAgent.toLowerCase();
-
-        function id(name) { return document.getElementById(name); }
-
-        // --- 判定とリンク先の切り替え ---
-
-        if (/iphone|ipad|ipod/.test(ua)) {
-            // iOS用：直接USDZファイルを呼び出す（rel="ar" が重要）
-            msg.innerText = "iPhone/iPad を検知しました";
-            btn.href = USDZ_URL;
-            btn.setAttribute("rel", "ar");
-            
-            // iOSの場合、imgタグを中に含めると自動起動率が上がることがあります
-            const img = document.createElement('img');
-            img.src = "apollo.glb"; // ダミー
-            img.style.display = "none";
-            btn.appendChild(img);
-
-        } else if (/android/.test(ua)) {
-            // Android用：GoogleのScene ViewerをIntentで強制呼び出し
-            msg.innerText = "Android を検知しました";
-            
-            // これが最短・最強のAndroid用AR起動URLです
-            const sceneViewerUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${GLB_URL}&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(FALLBACK_URL)};end;`;
-            
-            btn.href = sceneViewerUrl;
-
-        } else {
-            msg.innerText = "PC等ではARは起動できません";
-            btn.style.display = "none";
-        }
-
-        // 自動起動の試行（※Xブラウザ内ではほぼブロックされますが、一応記述）
-        window.onload = () => {
-            // ユーザー操作なしの起動はOSがブロックするため、
-            // 実際には「ボタンを押させる」のが最も確実です。
-        };
-    </script>
+<model-viewer
+    src="apollo.glb"
+    ios-src="apollo.usdz"
+    alt="Astronaut model"
+    ar
+    ar-modes="webxr"
+    camera-controls
+    autoplay animation-name="idle"
+    shadow-intensity="1"
+>
+    <button slot="ar-button" id="ar-button">
+        AR撮影
+    </button>
+</model-viewer>
 </body>
 </html>
