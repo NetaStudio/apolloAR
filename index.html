@@ -10,22 +10,39 @@
             width: 100vw;
             height: 100vh;
         }
+
+        /* ARボタンのスタイル（これがないと見えない場合があります） */
+        #ar-button {
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
+
 <model-viewer
     src="apollo.glb"
     ios-src="apollo.usdz"
     alt="Astronaut model"
     ar
-    ar-modes="webxr"
+    ar-modes="webxr scene-viewer quick-look" 
     camera-controls
-    autoplay animation-name="idle"
+    autoplay 
+    animation-name="idle"
     shadow-intensity="1"
 >
     <button slot="ar-button" id="ar-button">
         AR撮影
     </button>
 </model-viewer>
+
 </body>
 </html>
